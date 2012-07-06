@@ -11,7 +11,26 @@
     <input name="p" />
     <input name="s" />
     <input type="hidden" name="ac" value="getpics" />
+    <input type="hidden" name="hash" value="123456" />
     <input type="submit" />
+  </div>
+  <asp:HyperLink ID="linkWeibo" runat="server">用微博帐号登录</asp:HyperLink>
+  </form>
+  <hr />
+  <form action="https://api.weibo.com/2/statuses/update.json" method="post">
+  <div>
+    <textarea cols="40" rows="3" name="status"></textarea>
+    <input type="hidden" name="access_token" value="2.00r_UcPBxyT5LB27777a92550wMufj" />
+    <br />
+    <input type="submit" value="发布" />
+  </div>
+  </form>
+  <hr />
+  <form action="Action.aspx" method="post" enctype="multipart/form-data">
+  <div>
+    <input type="file" name="upload" />
+    <input type="hidden" name="ac" value="upload" />
+    <input type="submit" value="上传" />
   </div>
   </form>
 </body>

@@ -1,4 +1,4 @@
 EvoqueMyStyle
 =======
 
-EVOQUE My Style API base on .Net 3.5
+EVOQUE My Style API(.Net)

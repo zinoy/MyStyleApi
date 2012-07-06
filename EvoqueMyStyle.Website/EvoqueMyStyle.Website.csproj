@@ -36,6 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\EvoqueMyStyle.DataAccess\dlls\Bean.Framework.DataAccess.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\EvoqueMyStyle.DataAccess\dlls\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
@@ -52,8 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Action.aspx" />
+    <Content Include="OAuth.aspx" />
     <Content Include="TestForm.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="User.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -70,6 +77,17 @@
       <DependentUpon>Action.aspx</DependentUpon>
     </Compile>
     <Compile Include="ConfigHelper.cs" />
+    <Compile Include="OAuth.aspx.cs">
+      <DependentUpon>OAuth.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OAuth.aspx.designer.cs">
+      <DependentUpon>OAuth.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\Friends.cs" />
+    <Compile Include="Schema\Status.cs" />
+    <Compile Include="Schema\Token.cs" />
+    <Compile Include="Schema\User.cs" />
     <Compile Include="TestForm.aspx.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -77,11 +95,20 @@
     <Compile Include="TestForm.aspx.designer.cs">
       <DependentUpon>TestForm.aspx</DependentUpon>
     </Compile>
+    <Compile Include="User.aspx.cs">
+      <DependentUpon>User.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User.aspx.designer.cs">
+      <DependentUpon>User.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utility.cs" />
     <Compile Include="XMLOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="upload\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EvoqueMyStyle.DataAccess\EvoqueMyStyle.DataAccess.csproj">

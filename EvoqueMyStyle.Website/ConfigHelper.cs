@@ -8,6 +8,8 @@ namespace EvoqueMyStyle.Website
 {
     public static class ConfigHelper
     {
-        //public static int PageSize = int.Parse(ConfigurationManager.AppSettings[""]);
+        public static string APISecret = ConfigurationManager.AppSettings["API_Secret"];
+        public static string SinaAppKey = ConfigurationManager.AppSettings["Sina_APPKEY"];
+        public static string SinaSecret = ConfigurationManager.AppSettings["Sina_APPSECRET"];
     }
 }
