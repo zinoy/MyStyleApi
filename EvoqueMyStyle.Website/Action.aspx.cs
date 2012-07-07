@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 using EvoqueMyStyle.DataAccess.Tables;
 using EvoqueMyStyle.DataAccess;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace EvoqueMyStyle.Website
 {
@@ -74,20 +75,23 @@ namespace EvoqueMyStyle.Website
                         return;
                     }
                     HttpPostedFile file = Request.Files[0];
-                    string path = Server.MapPath("~/upload/temp/");
+                    string rpath = "upload/temp/";
+                    string path = Server.MapPath(string.Format("~/{0}", rpath));
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
                     }
                     FileInfo info = new FileInfo(file.FileName);
+                    string fpath;
+                    string filename;
                     do
                     {
-                        string filename = string.Format("{0}{1}", Utility.GenStr(32), info.Extension.ToLower());
-                        path += filename;
-                    } while (File.Exists(path));
-                    file.SaveAs(path);
+                        filename = string.Format("{0}{1}", Utility.GenStr(21), info.Extension.ToLower());
+                        fpath = string.Format("{0}{1}", path, filename);
+                    } while (File.Exists(fpath));
+                    file.SaveAs(fpath);
 
-                    XMLOutput.ReturnValue(path, "0", "url");
+                    XMLOutput.ReturnValue(rpath + filename, "0", "url");
                     break;
                 #endregion
 
@@ -96,10 +100,12 @@ namespace EvoqueMyStyle.Website
                     string pic = Request.Form["url"];
                     string _x = Request.Form["x"];
                     string _y = Request.Form["y"];
+                    string _a = Request.Form["rotate"];
                     string _r = Request.Form["ratio"];
                     string _w = Request.Form["width"];
+                    string _t = Request.Form["comment"];
 
-                    if (string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_x) || string.IsNullOrEmpty(_y) || string.IsNullOrEmpty(_r) || string.IsNullOrEmpty(_w))
+                    if (string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_x) || string.IsNullOrEmpty(_y) || string.IsNullOrEmpty(_a) || string.IsNullOrEmpty(_r) || string.IsNullOrEmpty(_w) || string.IsNullOrEmpty(_t))
                     {
                         XMLOutput.ReturnValue("参数不能为空", "0201");
                         return;
@@ -107,6 +113,12 @@ namespace EvoqueMyStyle.Website
 
                     float ratio;
                     if (!float.TryParse(_r, out ratio))
+                    {
+                        XMLOutput.ReturnValue("参数非法", "0202");
+                        return;
+                    }
+                    float angle;
+                    if (!float.TryParse(_a, out angle))
                     {
                         XMLOutput.ReturnValue("参数非法", "0202");
                         return;
@@ -130,19 +142,91 @@ namespace EvoqueMyStyle.Website
                         return;
                     }
 
-                    System.Drawing.Image img = System.Drawing.Image.FromFile(Server.MapPath(pic));
-
-                    //Bitmap newimg = new Bitmap();
-                    using (Graphics g = Graphics.FromImage(img))
+                    int bigwidth;
+                    int bigx, bigy;
+                    if (ratio < 1)
                     {
-                        g.ScaleTransform(ratio, ratio);
-                        Rectangle rect = new Rectangle(x, y, width, width);
-                        g.ExcludeClip(rect);
-                        g.Save();
-                        //img.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        bigwidth = (int)Math.Round(width / ratio);
+                        bigx = (int)Math.Round(x / ratio);
+                        bigy = (int)Math.Round(y / ratio);
+                    }
+                    else
+                    {
+                        bigwidth = width;
+                        bigx = x;
+                        bigy = y;
                     }
 
+                    string _path = string.Format("upload/{0:MMdd}/", DateTime.Now);
+                    string serverpath = Server.MapPath(string.Format("~/{0}", _path));
+                    if (!Directory.Exists(serverpath))
+                    {
+                        Directory.CreateDirectory(serverpath);
+                    }
+                    string fname = Guid.NewGuid().ToString("N");
+                    string filepath = string.Format("{0}{1}_", serverpath, fname);
 
+                    System.Drawing.Image img = System.Drawing.Image.FromFile(Server.MapPath(pic));
+                    System.Drawing.Image descimg = new Bitmap(bigwidth, bigwidth);
+
+                    ImageCodecInfo jpegCodeInfo = GetEncoderInfo("image/jpeg");
+                    EncoderParameters jpegParams = new EncoderParameters(1);
+                    jpegParams.Param[0] = new EncoderParameter(Encoder.Quality, 80L);
+
+                    using (Graphics g = Graphics.FromImage(descimg))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+
+                        Rectangle rect = new Rectangle(0, 0, bigwidth, bigwidth);
+                        Rectangle from = new Rectangle(bigx, bigy, bigwidth, bigwidth);
+
+                        if (angle > 0)
+                        {
+                            Bitmap timg = null;
+                            if (angle / 90 % 2 == 0)
+                                timg = new Bitmap(img.Width, img.Height);
+                            else
+                                timg = new Bitmap(img.Height, img.Width);
+                            Graphics org = Graphics.FromImage(timg);
+                            org.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                            org.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                            //计算偏移量
+                            Point offset = new Point((timg.Width - img.Width) / 2, (timg.Height - img.Height) / 2);
+                            //构造图像显示区域：让图像的中心与窗口的中心点一致
+                            Rectangle trect = new Rectangle(offset.X, offset.Y, img.Width, img.Height);
+                            Point center = new Point(trect.X + trect.Width / 2, trect.Y + trect.Height / 2);
+                            org.TranslateTransform(center.X, center.Y);
+                            org.RotateTransform(angle);
+                            org.TranslateTransform(-center.X, -center.Y);
+                            org.DrawImage(img, trect);
+
+                            org.ResetTransform();
+                            org.Save();
+                            org.Dispose();
+                            //timg.Save(string.Format("{0}r_.jpg", filepath), jpegCodeInfo, jpegParams);
+
+                            g.DrawImage(timg, rect, from, GraphicsUnit.Pixel);
+                            timg.Dispose();
+                        }
+                        else
+                        {
+                            g.DrawImage(img, rect, from, GraphicsUnit.Pixel);
+                        }
+                        g.Save();
+
+                    }
+                    descimg.Save(string.Format("{0}o_.jpg", filepath), jpegCodeInfo, jpegParams);
+                    System.Drawing.Image thumb = descimg.GetThumbnailImage(width, width, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
+                    thumb.Save(string.Format("{0}t_.jpg", filepath), jpegCodeInfo, jpegParams);
+
+                    thumb.Dispose();
+                    img.Dispose();
+
+                    //add to DB
+
+                    XMLOutput.ReturnValue("ok", "0", "message");
                     break;
                 #endregion
 
@@ -150,6 +234,24 @@ namespace EvoqueMyStyle.Website
                     XMLOutput.ReturnValue("不支持的命令", "0100");
                     return;
             }
+        }
+
+        private static ImageCodecInfo GetEncoderInfo(String mimeType)
+        {
+            int j;
+            ImageCodecInfo[] encoders;
+            encoders = ImageCodecInfo.GetImageEncoders();
+            for (j = 0; j < encoders.Length; ++j)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
+        }
+
+        private bool ImageAbort()
+        {
+            return true;
         }
     }
 }

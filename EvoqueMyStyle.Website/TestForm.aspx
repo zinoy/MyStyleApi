@@ -33,5 +33,17 @@
     <input type="submit" value="上传" />
   </div>
   </form>
+  <form action="Action.aspx" method="post">
+  <div><br />
+   url <input type="text" name="url" value="upload/temp/94enfuQ7DZ9x2YMhvWCy2.png" /><br />
+   x <input name="x" /><br />
+   y <input name="y" /><br />
+   rotate <input name="rotate" value="90" /><br />
+   width <input name="width" value="120" /><br />
+   ratio <input name="ratio" /><br />
+   <input type="hidden" name="ac" value="savepic" />
+   <input type="submit" value="保存照片" />
+  </div>
+  </form>
 </body>
 </html>
