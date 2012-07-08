@@ -20,10 +20,14 @@ namespace EvoqueMyStyle.Website
         public static bool ValidateAuthorization(NameValueCollection args, string hash)
         {
             StringBuilder builder = new StringBuilder();
-            string[] keylist = args.Keys.Cast<string>().ToArray();
+            string[] keylist = args.Keys.Cast<string>().Select(key => key.ToLower()).ToArray();
             Array.Sort(keylist);
             foreach (string key in keylist)
             {
+                if (key == "hash" || key == "filename" || key == "upload")
+                {
+                    continue;
+                }
                 builder.Append(args[key]);
             }
             builder.Append(ConfigHelper.APISecret);

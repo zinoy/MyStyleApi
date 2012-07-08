@@ -20,7 +20,7 @@ namespace EvoqueMyStyle.Website
                 XMLOutput.ReturnValue("错误的请求", "0101");
                 return;
             }
-            /*string hash = Request.Form["hash"];
+            string hash = Request.Form["hash"];
             if (string.IsNullOrEmpty(hash))
             {
                 XMLOutput.ReturnValue("需要验证身份", "0102");
@@ -30,7 +30,7 @@ namespace EvoqueMyStyle.Website
             {
                 XMLOutput.ReturnValue("身份验证失败", "0103");
                 return;
-            }*/
+            }
             if (string.IsNullOrEmpty(Request.Form["u"]))
             {
                 XMLOutput.ReturnValue("参数不能为空", "0201");

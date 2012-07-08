@@ -23,7 +23,7 @@ namespace EvoqueMyStyle.Website
                 XMLOutput.ReturnValue("错误的请求", "0101");
                 return;
             }
-            /*string hash = Request.Form["hash"];
+            string hash = Request.Form["hash"];
             if (string.IsNullOrEmpty(hash))
             {
                 XMLOutput.ReturnValue("需要验证身份", "0102");
@@ -33,7 +33,7 @@ namespace EvoqueMyStyle.Website
             {
                 XMLOutput.ReturnValue("身份验证失败", "0103");
                 return;
-            }*/
+            }
 
             switch (ac)
             {
@@ -123,24 +123,27 @@ namespace EvoqueMyStyle.Website
                         XMLOutput.ReturnValue("参数非法", "0202");
                         return;
                     }
-                    int x;
-                    if (!int.TryParse(_x, out x))
+                    float fx;
+                    if (!float.TryParse(_x, out fx))
                     {
                         XMLOutput.ReturnValue("参数非法", "0202");
                         return;
                     }
-                    int y;
-                    if (!int.TryParse(_y, out y))
+                    int x = (int)fx;
+                    float fy;
+                    if (!float.TryParse(_y, out fy))
                     {
                         XMLOutput.ReturnValue("参数非法", "0202");
                         return;
                     }
-                    int width;
-                    if (!int.TryParse(_w, out width))
+                    int y = (int)fy;
+                    float w;
+                    if (!float.TryParse(_w, out w))
                     {
                         XMLOutput.ReturnValue("参数非法", "0202");
                         return;
                     }
+                    int width = (int)w;
 
                     int bigwidth;
                     int bigx, bigy;
@@ -171,7 +174,7 @@ namespace EvoqueMyStyle.Website
 
                     ImageCodecInfo jpegCodeInfo = GetEncoderInfo("image/jpeg");
                     EncoderParameters jpegParams = new EncoderParameters(1);
-                    jpegParams.Param[0] = new EncoderParameter(Encoder.Quality, 80L);
+                    jpegParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
 
                     using (Graphics g = Graphics.FromImage(descimg))
                     {
@@ -218,11 +221,15 @@ namespace EvoqueMyStyle.Website
 
                     }
                     descimg.Save(string.Format("{0}o_.jpg", filepath), jpegCodeInfo, jpegParams);
-                    System.Drawing.Image thumb = descimg.GetThumbnailImage(width, width, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
+                    System.Drawing.Image big = descimg.GetThumbnailImage(width, width, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
+                    big.Save(string.Format("{0}b_.jpg", filepath), jpegCodeInfo, jpegParams);
+                    System.Drawing.Image thumb = big.GetThumbnailImage(100, 100, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
                     thumb.Save(string.Format("{0}t_.jpg", filepath), jpegCodeInfo, jpegParams);
 
                     thumb.Dispose();
+                    big.Dispose();
                     img.Dispose();
+                    File.Delete(Server.MapPath(pic));
 
                     //add to DB
 
