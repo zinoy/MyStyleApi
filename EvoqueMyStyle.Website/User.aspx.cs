@@ -121,7 +121,7 @@ namespace EvoqueMyStyle.Website
                     es_getfriends friends = new es_getfriends();
                     friends.uid = uid;
                     friends.ExecuteNonQuery();
-                    XMLOutput.ReturnValue(friends.friends, "0", "friends");
+                    XMLOutput.ReturnCData(friends.friends, "0", "friends");
                     break;
                 #endregion
                 default:
