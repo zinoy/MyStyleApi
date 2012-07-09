@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="es_addpic.cs" />
+    <Compile Include="es_adduser.cs" />
+    <Compile Include="es_checkuser.cs" />
     <Compile Include="es_getfriends.cs" />
     <Compile Include="es_getpics.cs" />
     <Compile Include="es_searchpics.cs" />

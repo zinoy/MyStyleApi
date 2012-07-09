@@ -97,6 +97,7 @@ namespace EvoqueMyStyle.Website
 
                 #region 保存照片
                 case "savepic":
+                    string uid = Request.Form["uid"];
                     string pic = Request.Form["url"];
                     string _x = Request.Form["x"];
                     string _y = Request.Form["y"];
@@ -104,8 +105,9 @@ namespace EvoqueMyStyle.Website
                     string _r = Request.Form["ratio"];
                     string _w = Request.Form["width"];
                     string _t = Request.Form["comment"];
+                    string _c = Request.Form["category"];
 
-                    if (string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_x) || string.IsNullOrEmpty(_y) || string.IsNullOrEmpty(_a) || string.IsNullOrEmpty(_r) || string.IsNullOrEmpty(_w) || string.IsNullOrEmpty(_t))
+                    if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_x) || string.IsNullOrEmpty(_y) || string.IsNullOrEmpty(_a) || string.IsNullOrEmpty(_r) || string.IsNullOrEmpty(_w) || string.IsNullOrEmpty(_t) || string.IsNullOrEmpty(_c))
                     {
                         XMLOutput.ReturnValue("参数不能为空", "0201");
                         return;
@@ -232,6 +234,12 @@ namespace EvoqueMyStyle.Website
                     File.Delete(Server.MapPath(pic));
 
                     //add to DB
+                    es_addpic add = new es_addpic();
+                    add.comment = _t;
+                    add.img = string.Format("{0}{1}", _path, fname);
+                    add.type = _c;
+                    add.uid = uid;
+                    add.ExecuteNonQuery();
 
                     XMLOutput.ReturnValue("ok", "0", "message");
                     break;

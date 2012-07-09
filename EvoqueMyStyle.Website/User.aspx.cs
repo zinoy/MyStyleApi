@@ -31,17 +31,6 @@ namespace EvoqueMyStyle.Website
                 XMLOutput.ReturnValue("身份验证失败", "0103");
                 return;
             }
-            if (string.IsNullOrEmpty(Request.Form["u"]))
-            {
-                XMLOutput.ReturnValue("参数不能为空", "0201");
-                return;
-            }
-            int uid;
-            if (!int.TryParse(Request.Form["u"], out uid))
-            {
-                XMLOutput.ReturnValue("参数非法", "0202");
-                return;
-            }
 
             switch (ac)
             {
@@ -64,9 +53,20 @@ namespace EvoqueMyStyle.Website
 
                     string _epass = Utility.SHA1(_pass + _mail);
 
-                    //query db via procedure
-
-                    XMLOutput.ReturnValue("ok", "0", "message");
+                    es_adduser adduser = new es_adduser();
+                    adduser.ip = Request.UserHostAddress;
+                    adduser.mail = _mail;
+                    adduser.pass = _epass;
+                    adduser.uid = Guid.NewGuid();
+                    adduser.ExecuteNonQuery();
+                    if (adduser.RETURN_VALUE == 1)
+                    {
+                        XMLOutput.ReturnValue("该邮箱已存在", "0300");
+                    }
+                    else
+                    {
+                        XMLOutput.ReturnValue(adduser.uid.ToString("N"), "0", "uid");
+                    }
                     break;
                 #endregion
 
@@ -89,14 +89,35 @@ namespace EvoqueMyStyle.Website
 
                     string epass = Utility.SHA1(pass + mail);
 
-                    //query db via procedure
-
-                    XMLOutput.ReturnValue("ok", "0", "message");
+                    es_checkuser checkuser = new es_checkuser();
+                    checkuser.mail = mail;
+                    checkuser.pass = epass;
+                    checkuser.ExecuteNonQuery();
+                    if (checkuser.uid != Guid.Empty)
+                    {
+                        XMLOutput.ReturnValue(checkuser.uid.ToString("N"), "0", "uid");
+                    }
+                    else
+                    {
+                        XMLOutput.ReturnValue("邮箱或密码错误", "0301");
+                    }
                     break;
                 #endregion
 
                 #region 获取朋友列表
                 case "getfriends":
+                    if (string.IsNullOrEmpty(Request.Form["u"]))
+                    {
+                        XMLOutput.ReturnValue("参数不能为空", "0201");
+                        return;
+                    }
+                    int uid;
+                    if (!int.TryParse(Request.Form["u"], out uid))
+                    {
+                        XMLOutput.ReturnValue("参数非法", "0202");
+                        return;
+                    }
+
                     es_getfriends friends = new es_getfriends();
                     friends.uid = uid;
                     friends.ExecuteNonQuery();

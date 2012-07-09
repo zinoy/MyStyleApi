@@ -63,7 +63,7 @@ namespace EvoqueMyStyle.Website
                     add.uid = json.uid;
                     add.ExecuteNonQuery();
 
-                    lbScript.Text = "<script type=\"text/javascript\">opener.set(\"" + json.uid.ToString() + "\");window.close();</script>";
+                    lbScript.Text = "<script type=\"text/javascript\">alert(opener);opener.set(\"" + json.uid.ToString() + "\");window.close();</script>";
                 }
             }
             catch (WebException ex)
