@@ -187,6 +187,8 @@ namespace EvoqueMyStyle.Website
                         Rectangle rect = new Rectangle(0, 0, bigwidth, bigwidth);
                         Rectangle from = new Rectangle(bigx, bigy, bigwidth, bigwidth);
 
+                        g.Clear(Color.White);
+
                         if (angle > 0)
                         {
                             Bitmap timg = null;
