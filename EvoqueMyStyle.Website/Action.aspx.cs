@@ -236,7 +236,7 @@ namespace EvoqueMyStyle.Website
                     File.Delete(Server.MapPath(pic));
 
                     //add to DB
-                    es_addpic add = new es_addpic();
+                    es_addsinapic add = new es_addsinapic();
                     add.comment = _t;
                     add.img = string.Format("{0}{1}", _path, fname);
                     add.type = _c;
