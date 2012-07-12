@@ -92,6 +92,9 @@ namespace EvoqueMyStyle.Website
             xw.WriteStartDocument();
             xw.WriteStartElement("return");
 
+            xw.WriteStartElement("code");
+            xw.WriteValue("0");
+            xw.WriteEndElement();
             xw.WriteStartElement("total");
             xw.WriteValue(total);
             xw.WriteEndElement();

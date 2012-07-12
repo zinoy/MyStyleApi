@@ -34,6 +34,7 @@ namespace EvoqueMyStyle.Website
                 XMLOutput.ReturnValue("身份验证失败", "0103");
                 return;
             }
+            string uid = Request.Form["uid"];
 
             switch (ac)
             {
@@ -41,6 +42,7 @@ namespace EvoqueMyStyle.Website
                 case "getpics":
                     string page = Request.Form["p"];
                     string size = Request.Form["s"];
+                    string cate = Request.Form["ca"];
 
                     if (string.IsNullOrEmpty(page) || string.IsNullOrEmpty(size))
                     {
@@ -61,7 +63,11 @@ namespace EvoqueMyStyle.Website
                         return;
                     }
 
-                    es_getpics gp = new es_getpics(pageidx, psize);
+                    es_getpics gp = new es_getpics();
+                    gp.category = cate == "null" ? null : cate;
+                    gp.page = pageidx;
+                    gp.size = psize;
+                    gp.uid = uid;
                     IList<share> pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
                     XMLOutput.ReturnPicsList(pics, gp.total);
                     break;
@@ -97,7 +103,6 @@ namespace EvoqueMyStyle.Website
 
                 #region 保存照片
                 case "savepic":
-                    string uid = Request.Form["uid"];
                     string pic = Request.Form["url"];
                     string _x = Request.Form["x"];
                     string _y = Request.Form["y"];
