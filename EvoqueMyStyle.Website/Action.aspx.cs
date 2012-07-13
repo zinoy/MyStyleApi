@@ -16,7 +16,7 @@ namespace EvoqueMyStyle.Website
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string[] commands = { "getpics", "upload", "savepic" };
+            string[] commands = { "getpics", "search", "upload", "savepic" };
             string ac = Request["ac"];
             if (Request.HttpMethod != "POST")
             {
@@ -68,8 +68,61 @@ namespace EvoqueMyStyle.Website
                     gp.page = pageidx;
                     gp.size = psize;
                     gp.uid = uid;
-                    IList<share> pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
+                    IList<share> pics;
+                    try
+                    {
+                        pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
+                    }
+                    catch (Exception ex)
+                    {
+                        XMLOutput.ReturnValue(ex.Message, "0500");
+                        return;
+                    }
                     XMLOutput.ReturnPicsList(pics, gp.total);
+                    break;
+                #endregion
+
+                #region 搜索图片
+                case "search":
+                    string _page = Request.Form["p"];
+                    string _size = Request.Form["s"];
+                    string _cate = Request.Form["ca"];
+                    string _query = Request.Form["q"];
+
+                    if (string.IsNullOrEmpty(_query) || string.IsNullOrEmpty(_page) || string.IsNullOrEmpty(_size))
+                    {
+                        XMLOutput.ReturnValue("参数不能为空", "0201");
+                        return;
+                    }
+
+                    int _pageidx;
+                    if (!int.TryParse(_page, out _pageidx))
+                    {
+                        XMLOutput.ReturnValue("参数非法", "0202");
+                        return;
+                    }
+                    int _psize;
+                    if (!int.TryParse(_size, out _psize))
+                    {
+                        XMLOutput.ReturnValue("参数非法", "0202");
+                        return;
+                    }
+
+                    es_searchpics sp = new es_searchpics();
+                    sp.key = _query;
+                    sp.page = _pageidx;
+                    sp.size = _psize;
+                    IList<share> _pics;
+                    try
+                    {
+                        _pics = share.Instance.GetDataTransferObjectList(sp.ExecuteReader());
+                    }
+                    catch (Exception ex)
+                    {
+                        XMLOutput.ReturnValue(ex.Message, "0500");
+                        return;
+                    }
+                    XMLOutput.ReturnPicsList(_pics, sp.total);
                     break;
                 #endregion
 
@@ -231,9 +284,9 @@ namespace EvoqueMyStyle.Website
                     }
                     descimg.Save(string.Format("{0}o_.jpg", filepath), jpegCodeInfo, jpegParams);
                     System.Drawing.Image big = descimg.GetThumbnailImage(width, width, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
-                    big.Save(string.Format("{0}b_.jpg", filepath), jpegCodeInfo, jpegParams);
+                    big.Save(string.Format("{0}big.jpg", filepath), jpegCodeInfo, jpegParams);
                     System.Drawing.Image thumb = big.GetThumbnailImage(100, 100, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
-                    thumb.Save(string.Format("{0}t_.jpg", filepath), jpegCodeInfo, jpegParams);
+                    thumb.Save(string.Format("{0}small.jpg", filepath), jpegCodeInfo, jpegParams);
 
                     thumb.Dispose();
                     big.Dispose();
@@ -243,7 +296,7 @@ namespace EvoqueMyStyle.Website
                     //add to DB
                     es_addsinapic add = new es_addsinapic();
                     add.comment = _t;
-                    add.img = string.Format("{0}{1}", _path, fname);
+                    add.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
                     add.type = _c;
                     add.uid = uid;
                     add.ExecuteNonQuery();
