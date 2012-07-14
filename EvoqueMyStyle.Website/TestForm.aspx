@@ -45,5 +45,10 @@
    <input type="submit" value="保存照片" />
   </div>
   </form>
+  <form action="http://58.30.249.2/api/Action.aspx" method="post">
+    <input type="text" name="ac" />
+    <input type="hidden" name="hash" value="0d9b19b464617e943337ce2185b981931c3fc185" />
+    <input type="submit" />
+  </form>
 </body>
 </html>

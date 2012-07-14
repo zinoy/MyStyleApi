@@ -1,2 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<publishData />
+<publishData>
+  <publishProfile publishUrl="C:\publish\mystyle" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/mystyle" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="配置文件1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="bin/EvoqueMyStyle.DataAccess.dll" publishTime="07/14/2012 09:56:09" />
+    <file relUrl="bin/EvoqueMyStyle.Website.pdb" publishTime="07/14/2012 18:31:14" />
+    <file relUrl="TestForm.aspx" publishTime="07/14/2012 17:29:32" />
+    <file relUrl="bin/EvoqueMyStyle.Website.dll" publishTime="07/14/2012 18:31:14" />
+    <file relUrl="Web.config" publishTime="07/14/2012 18:04:42" />
+    <file relUrl="bin/EvoqueMyStyle.DataAccess.pdb" publishTime="07/14/2012 09:56:09" />
+    <file relUrl="bin/Bean.Framework.DataAccess.dll" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="User.aspx" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="Action.aspx" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="OAuth.aspx" publishTime="07/06/2012 21:27:08" />
+  </publishProfile>
+</publishData>

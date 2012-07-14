@@ -9,6 +9,7 @@ using EvoqueMyStyle.DataAccess.Tables;
 using EvoqueMyStyle.DataAccess;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Collections.Specialized;
 
 namespace EvoqueMyStyle.Website
 {
@@ -16,7 +17,7 @@ namespace EvoqueMyStyle.Website
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string[] commands = { "getpics", "search", "upload", "savepic" };
+            string[] commands = { "getpics", "search", "upload", "savepic", "getcount" };
             string ac = Request["ac"];
             if (Request.HttpMethod != "POST")
             {
@@ -221,7 +222,15 @@ namespace EvoqueMyStyle.Website
                     }
 
                     string _path = string.Format("upload/{0:MMdd}/", DateTime.Now);
-                    string serverpath = Server.MapPath(string.Format("~/{0}", _path));
+                    string serverpath;
+                    if (string.IsNullOrEmpty(ConfigHelper.ImagePath))
+                    {
+                        serverpath = Server.MapPath(string.Format("~/{0}", _path));
+                    }
+                    else
+                    {
+                        serverpath = ConfigHelper.ImagePath + _path;
+                    }
                     if (!Directory.Exists(serverpath))
                     {
                         Directory.CreateDirectory(serverpath);
@@ -294,14 +303,27 @@ namespace EvoqueMyStyle.Website
                     File.Delete(Server.MapPath(pic));
 
                     //add to DB
-                    es_addsinapic add = new es_addsinapic();
-                    add.comment = _t;
-                    add.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
-                    add.type = _c;
-                    add.uid = uid;
-                    add.ExecuteNonQuery();
+                    int tu;
+                    if (int.TryParse(uid, out tu))
+                    {
+                        es_addsinapic add = new es_addsinapic();
+                        add.comment = _t;
+                        add.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
+                        add.type = _c;
+                        add.uid = uid;
+                        add.ExecuteNonQuery();
+                    }
 
-                    XMLOutput.ReturnValue("ok", "0", "message");
+                    XMLOutput.ReturnValue(string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname), "0", "img");
+                    break;
+                #endregion
+
+                #region 获取图片总数
+                case "getcount":
+                    es_getcount gc = new es_getcount();
+                    gc.ExecuteNonQuery();
+
+                    XMLOutput.ReturnValue(gc.RETURN_VALUE.ToString(), "0", "count");
                     break;
                 #endregion
 

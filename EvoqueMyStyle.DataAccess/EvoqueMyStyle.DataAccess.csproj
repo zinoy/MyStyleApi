@@ -46,6 +46,7 @@
     <Compile Include="es_addsinapic.cs" />
     <Compile Include="es_adduser.cs" />
     <Compile Include="es_checkuser.cs" />
+    <Compile Include="es_getcount.cs" />
     <Compile Include="es_getfriends.cs" />
     <Compile Include="es_getpics.cs" />
     <Compile Include="es_searchpics.cs" />
