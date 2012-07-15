@@ -313,6 +313,15 @@ namespace EvoqueMyStyle.Website
                         add.uid = uid;
                         add.ExecuteNonQuery();
                     }
+                    else
+                    {
+                        es_addlocalpic add = new es_addlocalpic();
+                        add.comment = _t;
+                        add.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
+                        add.type = _c;
+                        add.uid = uid;
+                        add.ExecuteNonQuery();
+                    }
 
                     XMLOutput.ReturnValue(string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname), "0", "img");
                     break;

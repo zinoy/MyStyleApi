@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="es_addlocalpic.cs" />
     <Compile Include="es_addsinapic.cs" />
     <Compile Include="es_adduser.cs" />
     <Compile Include="es_checkuser.cs" />
