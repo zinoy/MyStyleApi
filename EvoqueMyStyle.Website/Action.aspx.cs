@@ -20,7 +20,6 @@ namespace EvoqueMyStyle.Website
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string[] commands = { "getpics", "search", "upload", "savepic", "getcount" };
             string ac = Request["ac"];
             if (Request.HttpMethod != "POST")
             {
@@ -286,16 +285,7 @@ namespace EvoqueMyStyle.Website
 
                     //add to DB
                     int tu;
-                    if (int.TryParse(uid, out tu))
-                    {
-                        es_addsinapic add = new es_addsinapic();
-                        add.comment = _t;
-                        add.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
-                        add.type = _c;
-                        add.uid = uid;
-                        add.ExecuteNonQuery();
-                    }
-                    else
+                    if (!int.TryParse(uid, out tu))
                     {
                         es_addlocalpic add = new es_addlocalpic();
                         add.comment = _t;
@@ -303,10 +293,18 @@ namespace EvoqueMyStyle.Website
                         add.type = _c;
                         add.uid = uid;
                         add.ExecuteNonQuery();
+                        XMLOutput.ReturnValue("ok", "0", "message");
+                        return;
                     }
 
-                    string accessToken = "2.00r_UcPBBydTJBeef78a655aF7cARC";
+                    es_addsinapic adds = new es_addsinapic();
+                    adds.comment = _t;
+                    adds.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
+                    adds.type = _c;
+                    adds.uid = uid;
+                    adds.ExecuteNonQuery();
 
+                    string accessToken = adds.token;
                     UriBuilder ub = new UriBuilder("https://upload.api.weibo.com/2/statuses/upload.json");
 
                     Dictionary<string, string> query = new Dictionary<string, string>();

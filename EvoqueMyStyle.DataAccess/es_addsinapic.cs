@@ -12,7 +12,7 @@ namespace EvoqueMyStyle.DataAccess
 		{
             base.ConnKey = "connStr";
 			spName = "es_addsinapic";
-			Parameters = new SqlParameter[6];
+			Parameters = new SqlParameter[7];
 			Parameters[0] = new SqlParameter("@RETURN_VALUE",SqlDbType.Int,4);
 			Parameters[0].Direction = ParameterDirection.ReturnValue;
 			Parameters[1] = new SqlParameter("@uid",SqlDbType.NVarChar,50);
@@ -25,6 +25,8 @@ namespace EvoqueMyStyle.DataAccess
 			Parameters[4].Direction = ParameterDirection.Input;
 			Parameters[5] = new SqlParameter("@mobile",SqlDbType.NVarChar,50);
 			Parameters[5].Direction = ParameterDirection.Input;
+			Parameters[6] = new SqlParameter("@token",SqlDbType.VarChar,100);
+			Parameters[6].Direction = ParameterDirection.InputOutput;
 		}
 		public es_addsinapic(
 			System.String _uid, 
@@ -36,7 +38,7 @@ namespace EvoqueMyStyle.DataAccess
 		{
             base.ConnKey = "connStr";
 			spName = "es_addsinapic";
-			Parameters = new SqlParameter[6];
+			Parameters = new SqlParameter[7];
 			Parameters[0] = new SqlParameter("@RETURN_VALUE",SqlDbType.Int,4);
 			Parameters[0].Direction = ParameterDirection.ReturnValue;
 			
@@ -55,6 +57,9 @@ namespace EvoqueMyStyle.DataAccess
 			Parameters[5] = new SqlParameter("@mobile",SqlDbType.NVarChar,50);
 			Parameters[5].Direction = ParameterDirection.Input;
 			Parameters[5].Value = _mobile; 
+			Parameters[6] = new SqlParameter("@token",SqlDbType.VarChar,100);
+			Parameters[6].Direction = ParameterDirection.InputOutput;
+			
 		}
 		public Int32 RETURN_VALUE
 		{
@@ -120,6 +125,17 @@ namespace EvoqueMyStyle.DataAccess
 			get
 			{
 				return Parameters[5].Value.DBTypeToString();
+			}
+		}
+		public String token
+		{
+			set
+			{
+				Parameters[6].Value = value;
+			}
+			get
+			{
+				return Parameters[6].Value.DBTypeToString();
 			}
 		}
 	}

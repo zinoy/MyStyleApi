@@ -13,7 +13,6 @@ namespace EvoqueMyStyle.Website
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string[] commands = { "adduser", "login", "getfriends" };
             string ac = Request["ac"];
             if (Request.HttpMethod != "POST")
             {
