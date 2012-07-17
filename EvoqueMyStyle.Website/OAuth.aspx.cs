@@ -51,7 +51,7 @@ namespace EvoqueMyStyle.Website
                     JObject userjson = JObject.Parse(userinfo);
 
                     userid.Add("count", "200");
-                    string friends = Utility.GetJsonString("https://api.weibo.com/2/friendships/friends.json", userid, json.access_token);
+                    string friends = Utility.GetJsonString("https://api.weibo.com/2/friendships/followers.json", userid, json.access_token);
                     JObject following = JObject.Parse(friends);
 
                     es_addsinauser add = new es_addsinauser();
