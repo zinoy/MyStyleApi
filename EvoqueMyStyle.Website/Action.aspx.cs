@@ -10,6 +10,9 @@ using EvoqueMyStyle.DataAccess;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Specialized;
+using System.Net;
+using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace EvoqueMyStyle.Website
 {
@@ -128,36 +131,13 @@ namespace EvoqueMyStyle.Website
                 #endregion
 
                 #region 上传照片
-                case "upload":
+                case "uploadpic":
                     if (Request.Files.Count == 0)
                     {
                         XMLOutput.ReturnValue("上传的文件不存在", "0205");
                         return;
                     }
-                    HttpPostedFile file = Request.Files[0];
-                    string rpath = "upload/temp/";
-                    string path = Server.MapPath(string.Format("~/{0}", rpath));
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    FileInfo info = new FileInfo(file.FileName);
-                    string fpath;
-                    string filename;
-                    do
-                    {
-                        filename = string.Format("{0}{1}", Utility.GenStr(21), info.Extension.ToLower());
-                        fpath = string.Format("{0}{1}", path, filename);
-                    } while (File.Exists(fpath));
-                    file.SaveAs(fpath);
-
-                    XMLOutput.ReturnValue(rpath + filename, "0", "url");
-                    break;
-                #endregion
-
-                #region 保存照片
-                case "savepic":
-                    string pic = Request.Form["url"];
+                    //string pic = Request.Form["url"];
                     string _x = Request.Form["x"];
                     string _y = Request.Form["y"];
                     string _a = Request.Form["rotate"];
@@ -166,7 +146,7 @@ namespace EvoqueMyStyle.Website
                     string _t = Request.Form["comment"];
                     string _c = Request.Form["category"];
 
-                    if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_x) || string.IsNullOrEmpty(_y) || string.IsNullOrEmpty(_a) || string.IsNullOrEmpty(_r) || string.IsNullOrEmpty(_w) || string.IsNullOrEmpty(_t) || string.IsNullOrEmpty(_c))
+                    if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(_x) || string.IsNullOrEmpty(_y) || string.IsNullOrEmpty(_a) || string.IsNullOrEmpty(_r) || string.IsNullOrEmpty(_w) || string.IsNullOrEmpty(_t) || string.IsNullOrEmpty(_c))
                     {
                         XMLOutput.ReturnValue("参数不能为空", "0201");
                         return;
@@ -206,6 +186,7 @@ namespace EvoqueMyStyle.Website
                     }
                     int width = (int)w;
 
+                    //裁剪图片
                     int bigwidth;
                     int bigx, bigy;
                     if (ratio < 1)
@@ -238,12 +219,13 @@ namespace EvoqueMyStyle.Website
                     string fname = Guid.NewGuid().ToString("N");
                     string filepath = string.Format("{0}{1}_", serverpath, fname);
 
-                    System.Drawing.Image img = System.Drawing.Image.FromFile(Server.MapPath(pic));
+                    HttpPostedFile file = Request.Files[0];
+                    System.Drawing.Image img = System.Drawing.Image.FromStream(file.InputStream);
                     System.Drawing.Image descimg = new Bitmap(bigwidth, bigwidth);
 
                     ImageCodecInfo jpegCodeInfo = GetEncoderInfo("image/jpeg");
                     EncoderParameters jpegParams = new EncoderParameters(1);
-                    jpegParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
+                    jpegParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 100L);
 
                     using (Graphics g = Graphics.FromImage(descimg))
                     {
@@ -300,7 +282,7 @@ namespace EvoqueMyStyle.Website
                     thumb.Dispose();
                     big.Dispose();
                     img.Dispose();
-                    File.Delete(Server.MapPath(pic));
+                    //File.Delete(Server.MapPath(pic));
 
                     //add to DB
                     int tu;
@@ -323,7 +305,60 @@ namespace EvoqueMyStyle.Website
                         add.ExecuteNonQuery();
                     }
 
-                    XMLOutput.ReturnValue(string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname), "0", "img");
+                    string accessToken = "2.00r_UcPBBydTJBeef78a655aF7cARC";
+
+                    UriBuilder ub = new UriBuilder("https://upload.api.weibo.com/2/statuses/upload.json");
+
+                    Dictionary<string, string> query = new Dictionary<string, string>();
+                    query.Add("access_token", accessToken);
+                    query.Add("status", HttpUtility.UrlEncode(_t));
+
+                    HttpWebRequest req = null;
+                    req = (HttpWebRequest)WebRequest.Create(ub.Uri);
+                    req.Method = "POST";
+                    string boundary = Utility.CreateFormDataBoundary();
+                    req.ContentType = "multipart/form-data; boundary=" + boundary;
+                    Stream sm = req.GetRequestStream();
+                    foreach (string key in query.Keys)
+                    {
+                        string item = String.Format(Utility.FormDataTemplate, boundary, key, query[key]);
+                        byte[] itemBytes = System.Text.Encoding.UTF8.GetBytes(item);
+                        sm.Write(itemBytes, 0, itemBytes.Length);
+                    }
+
+                    FileInfo fi = new FileInfo(string.Format("{0}o_.jpg", filepath));
+                    string header = String.Format(Utility.HeaderTemplate, boundary, "pic", fi.Name, "image/jpeg");
+                    byte[] headerbytes = Encoding.UTF8.GetBytes(header);
+                    sm.Write(headerbytes, 0, headerbytes.Length);
+                    using (FileStream fileStream = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read))
+                    {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = 0;
+                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            sm.Write(buffer, 0, bytesRead);
+                        }
+                        fileStream.Close();
+                    }
+                    byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+                    sm.Write(newlineBytes, 0, newlineBytes.Length);
+                    byte[] endBytes = System.Text.Encoding.UTF8.GetBytes("--" + boundary + "--");
+                    sm.Write(endBytes, 0, endBytes.Length);
+                    sm.Close();
+
+                    using (WebResponse response = req.GetResponse())
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        JObject result = JObject.Parse(reader.ReadToEnd());
+                        if (result["error"] == null)
+                        {
+                            XMLOutput.ReturnValue("ok", "0", "message");
+                        }
+                        else
+                        {
+                            XMLOutput.ReturnValue((string)result["error"], (string)result["error_code"]);
+                        }
+                    }
                     break;
                 #endregion
 

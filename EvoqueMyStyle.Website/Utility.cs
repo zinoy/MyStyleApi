@@ -12,6 +12,13 @@ namespace EvoqueMyStyle.Website
     public static class Utility
     {
         /// <summary>
+        /// Template for a multipart/form-data item.
+        /// </summary>
+        public const string FormDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";       /// <summary>
+        /// Template for a file item in multipart/form-data format.
+        /// </summary>
+        public const string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
+        /// <summary>
         /// 验证发送者的身份。
         /// </summary>
         /// <param name="args">传递的数据集合。</param>
@@ -187,6 +194,17 @@ namespace EvoqueMyStyle.Website
         {
             return GetJsonString(requestPath, null, accessToken, null);
         }
+        /// <summary>
+        /// Creates a multipart/form-data boundary.
+        /// </summary>
+        /// <returns>
+        /// A dynamically generated form boundary for use in posting multipart/form-data requests.
+        /// </returns>
+        public static string CreateFormDataBoundary()
+        {
+            return "---------------------------" + DateTime.Now.Ticks.ToString("x");
+        }
 
     }
+
 }
