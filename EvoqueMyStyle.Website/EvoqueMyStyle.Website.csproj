@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Action.aspx" />
+    <Content Include="External.aspx" />
     <Content Include="OAuth.aspx" />
     <Content Include="TestForm.aspx" />
     <Content Include="User.aspx" />
@@ -77,6 +78,13 @@
       <DependentUpon>Action.aspx</DependentUpon>
     </Compile>
     <Compile Include="ConfigHelper.cs" />
+    <Compile Include="External.aspx.cs">
+      <DependentUpon>External.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="External.aspx.designer.cs">
+      <DependentUpon>External.aspx</DependentUpon>
+    </Compile>
     <Compile Include="OAuth.aspx.cs">
       <DependentUpon>OAuth.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

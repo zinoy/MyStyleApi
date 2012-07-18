@@ -50,5 +50,14 @@
     <input type="hidden" name="hash" value="0d9b19b464617e943337ce2185b981931c3fc185" />
     <input type="submit" />
   </form>
+  <hr />
+  <form action="External.aspx">
+    <input type="text" name="pic" />
+    <input type="text" name="mobile" />
+    <input type="text" name="status" />
+    <input type="hidden" name="type" value="4" />
+    <input type="hidden" name="ac" value="upload" />
+    <input type="submit" value="upload" />
+  </form>
 </body>
 </html>

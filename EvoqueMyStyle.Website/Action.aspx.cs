@@ -222,7 +222,7 @@ namespace EvoqueMyStyle.Website
                     System.Drawing.Image img = System.Drawing.Image.FromStream(file.InputStream);
                     System.Drawing.Image descimg = new Bitmap(bigwidth, bigwidth);
 
-                    ImageCodecInfo jpegCodeInfo = GetEncoderInfo("image/jpeg");
+                    ImageCodecInfo jpegCodeInfo = Utility.GetEncoderInfo("image/jpeg");
                     EncoderParameters jpegParams = new EncoderParameters(1);
                     jpegParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 100L);
 
@@ -373,19 +373,6 @@ namespace EvoqueMyStyle.Website
                     XMLOutput.ReturnValue("不支持的命令", "0100");
                     return;
             }
-        }
-
-        private static ImageCodecInfo GetEncoderInfo(String mimeType)
-        {
-            int j;
-            ImageCodecInfo[] encoders;
-            encoders = ImageCodecInfo.GetImageEncoders();
-            for (j = 0; j < encoders.Length; ++j)
-            {
-                if (encoders[j].MimeType == mimeType)
-                    return encoders[j];
-            }
-            return null;
         }
 
         private bool ImageAbort()

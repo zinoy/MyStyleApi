@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Drawing.Imaging;
 
 namespace EvoqueMyStyle.Website
 {
@@ -23,8 +24,9 @@ namespace EvoqueMyStyle.Website
         /// </summary>
         /// <param name="args">传递的数据集合。</param>
         /// <param name="hash">验证指纹。</param>
+        /// <param name="secret">密文。</param>
         /// <returns></returns>
-        public static bool ValidateAuthorization(NameValueCollection args, string hash)
+        public static bool ValidateAuthorization(NameValueCollection args, string hash, string secret)
         {
             StringBuilder builder = new StringBuilder();
             string[] keylist = args.Keys.Cast<string>().Select(key => key.ToLower()).ToArray();
@@ -37,12 +39,22 @@ namespace EvoqueMyStyle.Website
                 }
                 builder.Append(args[key]);
             }
-            builder.Append(ConfigHelper.APISecret);
+            builder.Append(secret);
             string fp = SHA1(builder.ToString());
             if (fp == hash)
                 return true;
             else
                 return false;
+        }
+        /// <summary>
+        /// 使用默认的密文验证发送者的身份。
+        /// </summary>
+        /// <param name="args">传递的数据集合。</param>
+        /// <param name="hash">验证指纹。</param>
+        /// <returns></returns>
+        public static bool ValidateAuthorization(NameValueCollection args, string hash)
+        {
+            return ValidateAuthorization(args, hash, ConfigHelper.APISecret);
         }
         /// <summary>
         /// 将传入的字符串按照MD5进行加密。
@@ -106,6 +118,23 @@ namespace EvoqueMyStyle.Website
                 pairs.Add(string.Format("{0}={1}", key, HttpUtility.UrlEncode(query[key])));
             }
             return string.Join("&", pairs.ToArray());
+        }
+        /// <summary>
+        /// 将指定的查询字符串转换为键值对。
+        /// </summary>
+        /// <param name="query">查询字符串。</param>
+        /// <returns></returns>
+        public static NameValueCollection FromQueryString(string query)
+        {
+            string qs = query.Replace("?", string.Empty);
+            string[] part = qs.Split('&');
+            NameValueCollection r = new NameValueCollection();
+            foreach (string it in part)
+            {
+                string[] pair = it.Split('=');
+                r.Add(pair[0], pair[1]);
+            }
+            return r;
         }
         /// <summary>
         /// 发送一个HTTP请求并获取返回的字符串。
@@ -195,6 +224,24 @@ namespace EvoqueMyStyle.Website
             return GetJsonString(requestPath, null, accessToken, null);
         }
         /// <summary>
+        /// 根据指定的图片MIME类型返回相应的<code>ImageCodecInfo</code>实例。
+        /// </summary>
+        /// <param name="mimeType">图片的MIME类型字符串。</param>
+        /// <returns></returns>
+        public static ImageCodecInfo GetEncoderInfo(String mimeType)
+        {
+            int j;
+            ImageCodecInfo[] encoders;
+            encoders = ImageCodecInfo.GetImageEncoders();
+            for (j = 0; j < encoders.Length; ++j)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Creates a multipart/form-data boundary.
         /// </summary>
         /// <returns>
@@ -203,6 +250,50 @@ namespace EvoqueMyStyle.Website
         public static string CreateFormDataBoundary()
         {
             return "---------------------------" + DateTime.Now.Ticks.ToString("x");
+        }
+        /// <summary>
+        /// 从指定的URL下载图片。
+        /// </summary>
+        /// <param name="_URL">图片的URL。</param>
+        /// <returns>Image</returns>
+        public static System.Drawing.Image DownloadImage(string _URL)
+        {
+            System.Drawing.Image _tmpImage = null;
+
+            try
+            {
+                // Open a connection
+                System.Net.HttpWebRequest _HttpWebRequest = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(_URL);
+
+                _HttpWebRequest.AllowWriteStreamBuffering = true;
+
+                // You can also specify additional header values like the user agent or the referer: (Optional)
+                //_HttpWebRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)";
+                //_HttpWebRequest.Referer = "http://www.google.com/";
+
+                // set timeout for 20 seconds (Optional)
+                _HttpWebRequest.Timeout = 20000;
+
+                // Request response:
+                System.Net.WebResponse _WebResponse = _HttpWebRequest.GetResponse();
+
+                // Open data stream:
+                System.IO.Stream _WebStream = _WebResponse.GetResponseStream();
+
+                // convert webstream to image
+                _tmpImage = System.Drawing.Image.FromStream(_WebStream);
+
+                // Cleanup
+                _WebResponse.Close();
+                _WebResponse.Close();
+            }
+            catch (Exception _Exception)
+            {
+                // Error
+                Console.WriteLine("Exception caught in process: {0}", _Exception.ToString());
+                return null;
+            }
+            return _tmpImage;
         }
 
     }

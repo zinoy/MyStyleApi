@@ -12,6 +12,7 @@ using EvoqueMyStyle.DataAccess;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace EvoqueMyStyle.Website
 {
@@ -63,7 +64,19 @@ namespace EvoqueMyStyle.Website
                     add.uid = json.uid;
                     add.ExecuteNonQuery();
 
-                    lbScript.Text = "<script type=\"text/javascript\">opener.setuser(\"" + json.uid.ToString() + "\");window.close();</script>";
+                    try
+                    {
+                        byte[] qb = Convert.FromBase64String(st);
+                        string qs = Encoding.UTF8.GetString(qb);
+                        NameValueCollection qc = Utility.FromQueryString(qs);
+                        qc.Set("ac", "submit");
+                        qc.Add("uid", json.uid.ToString());
+                        Response.Redirect(string.Format("External.aspx?{0}", Utility.ConstructQueryString(qc)));
+                    }
+                    catch (FormatException)
+                    {
+                        lbScript.Text = "<script type=\"text/javascript\">opener.setuser(\"" + json.uid.ToString() + "\");window.close();</script>";
+                    }
                 }
             }
             catch (WebException ex)
