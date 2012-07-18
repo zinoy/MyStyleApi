@@ -24,13 +24,13 @@ namespace EvoqueMyStyle.Website
                 XMLOutput.ReturnValue("错误的请求", "0101");
                 return;
             }
-            string hash = Request.Form["hash"];
+            string hash = Request.QueryString["hash"];
             if (string.IsNullOrEmpty(hash))
             {
                 XMLOutput.ReturnValue("需要验证身份", "0102");
                 return;
             }
-            if (!Utility.ValidateAuthorization(Request.Form, hash, ConfigHelper.ExternalSecret))
+            if (!Utility.ValidateAuthorization(Request.QueryString, hash, ConfigHelper.ExternalSecret))
             {
                 XMLOutput.ReturnValue("身份验证失败", "0103");
                 return;
@@ -56,13 +56,13 @@ namespace EvoqueMyStyle.Website
                     Response.Redirect(oauth.ToString());
                     break;
                 case "submit":
-                    string uid = Request.Form["uid"];
-                    string pic = Request.Form["url"];
-                    string _n = Request.Form["user"];
-                    string _t = Request.Form["comment"];
-                    string _c = Request.Form["category"];
+                    string uid = Request.QueryString["uid"];
+                    string pic = Request.QueryString["pic"];
+                    string _t = Request.QueryString["status"];
+                    string _c = Request.QueryString["type"];
+                    string _m = Request.QueryString["mobile"];
 
-                    if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_n) || string.IsNullOrEmpty(_t) || string.IsNullOrEmpty(_c))
+                    if (string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pic) || string.IsNullOrEmpty(_t) || string.IsNullOrEmpty(_c) || string.IsNullOrEmpty(_m))
                     {
                         XMLOutput.ReturnValue("参数不能为空", "0201");
                         return;
@@ -94,6 +94,7 @@ namespace EvoqueMyStyle.Website
 
                     ImageCodecInfo jpegCodeInfo = Utility.GetEncoderInfo("image/jpeg");
                     EncoderParameters jpegParams = new EncoderParameters(1);
+                    jpegParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 100L);
 
                     img.Save(string.Format("{0}big.jpg", filepath), jpegCodeInfo, jpegParams);
                     System.Drawing.Image thumb = img.GetThumbnailImage(100, 100, new System.Drawing.Image.GetThumbnailImageAbort(ImageAbort), new IntPtr());
@@ -106,6 +107,7 @@ namespace EvoqueMyStyle.Website
                     adds.img = string.Format("{0}{1}", _path.Replace("upload/", string.Empty), fname);
                     adds.type = _c;
                     adds.uid = uid;
+                    adds.mobile = _m;
                     adds.ExecuteNonQuery();
 
                     string accessToken = adds.token;
@@ -128,7 +130,7 @@ namespace EvoqueMyStyle.Website
                         sm.Write(itemBytes, 0, itemBytes.Length);
                     }
 
-                    FileInfo fi = new FileInfo(string.Format("{0}o_.jpg", filepath));
+                    FileInfo fi = new FileInfo(string.Format("{0}big.jpg", filepath));
                     string header = String.Format(Utility.HeaderTemplate, boundary, "pic", fi.Name, "image/jpeg");
                     byte[] headerbytes = Encoding.UTF8.GetBytes(header);
                     sm.Write(headerbytes, 0, headerbytes.Length);

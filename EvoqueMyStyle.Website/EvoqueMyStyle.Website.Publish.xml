@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="C:\publish\mystyle" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/mystyle" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="到文件夹" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="07/06/2012 12:41:02" />
-    <file relUrl="bin/EvoqueMyStyle.DataAccess.dll" publishTime="07/18/2012 16:18:41" />
-    <file relUrl="Web.config" publishTime="07/18/2012 16:18:46" />
-    <file relUrl="bin/EvoqueMyStyle.Website.dll" publishTime="07/18/2012 16:33:05" />
-    <file relUrl="TestForm.aspx" publishTime="07/18/2012 16:23:31" />
-    <file relUrl="bin/EvoqueMyStyle.DataAccess.pdb" publishTime="07/18/2012 16:18:41" />
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="bin/EvoqueMyStyle.DataAccess.dll" publishTime="07/19/2012 00:16:02" />
+    <file relUrl="bin/EvoqueMyStyle.Website.pdb" publishTime="07/19/2012 00:17:41" />
+    <file relUrl="TestForm.aspx" publishTime="07/18/2012 20:04:35" />
+    <file relUrl="bin/EvoqueMyStyle.Website.dll" publishTime="07/19/2012 00:17:41" />
+    <file relUrl="Web.config" publishTime="07/19/2012 00:16:02" />
+    <file relUrl="bin/EvoqueMyStyle.DataAccess.pdb" publishTime="07/19/2012 00:16:02" />
+    <file relUrl="External.aspx" publishTime="07/18/2012 20:04:35" />
+    <file relUrl="bin/Bean.Framework.DataAccess.dll" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="User.aspx" publishTime="07/06/2012 21:27:08" />
+    <file relUrl="Action.aspx" publishTime="07/06/2012 21:27:08" />
     <file relUrl="OAuth.aspx" publishTime="07/06/2012 14:13:08" />
-    <file relUrl="bin/Bean.Framework.DataAccess.dll" publishTime="07/05/2012 10:10:20" />
-    <file relUrl="User.aspx" publishTime="07/06/2012 11:48:37" />
-    <file relUrl="Action.aspx" publishTime="07/05/2012 12:00:44" />
-    <file relUrl="bin/EvoqueMyStyle.Website.pdb" publishTime="07/18/2012 16:33:05" />
-    <file relUrl="External.aspx" publishTime="07/18/2012 11:27:41" />
   </publishProfile>
 </publishData>
