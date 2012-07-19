@@ -13,6 +13,7 @@ using System.Collections.Specialized;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace EvoqueMyStyle.Website
 {
@@ -366,6 +367,29 @@ namespace EvoqueMyStyle.Website
                     gc.ExecuteNonQuery();
 
                     XMLOutput.ReturnValue(gc.RETURN_VALUE.ToString(), "0", "count");
+                    break;
+                #endregion
+
+                #region 试驾
+                case "td":
+                    string _user = Request.Form["user"];
+                    string _phone = Request.Form["phone"];
+                    string _mail = Request.Form["mail"];
+
+                    if (string.IsNullOrEmpty(_user) || string.IsNullOrEmpty(_phone) || string.IsNullOrEmpty(_mail))
+                    {
+                        XMLOutput.ReturnValue("参数不能为空", "0201");
+                        return;
+                    }
+
+                    es_addtd td = new es_addtd();
+                    td.email = _mail;
+                    td.ip = Request.UserHostAddress;
+                    td.mobile = _phone;
+                    td.name = _user;
+                    td.ExecuteNonQuery();
+
+                    XMLOutput.ReturnValue("ok", "0", "message");
                     break;
                 #endregion
 
