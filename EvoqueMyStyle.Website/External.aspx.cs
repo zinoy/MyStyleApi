@@ -23,14 +23,8 @@ namespace EvoqueMyStyle.Website
             {
                 XMLOutput.ReturnValue("错误的请求", "0101");
                 return;
-<<<<<<< HEAD
-            }*/
-            if (ac != "submit")
-=======
             }
-            string hash = Request.QueryString["hash"];
-            if (string.IsNullOrEmpty(hash))
->>>>>>> ea3e5aa5c161359e3092b56fc975c2789cf0b53e
+            if (ac != "submit")
             {
                 string hash = Request.Form["hash"];
                 if (string.IsNullOrEmpty(hash))
@@ -43,15 +37,7 @@ namespace EvoqueMyStyle.Website
                     XMLOutput.ReturnValue("身份验证失败", "0103");
                     return;
                 }
-            }
-<<<<<<< HEAD
-=======
-            if (!Utility.ValidateAuthorization(Request.QueryString, hash, ConfigHelper.ExternalSecret))
-            {
-                XMLOutput.ReturnValue("身份验证失败", "0103");
-                return;
             }*/
->>>>>>> ea3e5aa5c161359e3092b56fc975c2789cf0b53e
 
             switch (ac)
             {
