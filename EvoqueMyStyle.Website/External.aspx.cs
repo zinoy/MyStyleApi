@@ -51,7 +51,7 @@ namespace EvoqueMyStyle.Website
                     StringBuilder oauth = new StringBuilder("https://api.weibo.com/oauth2/authorize?");
                     NameValueCollection qs = new NameValueCollection();
                     qs.Add("client_id", ConfigHelper.SinaAppKey);
-                    qs.Add("redirect_uri", string.Format("{0}/temp/OAuth.aspx", Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped)));
+                    qs.Add("redirect_uri", string.Format("{0}/api/OAuth.aspx", Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped)));
                     qs.Add("response_type", "code");
                     byte[] qstr = Encoding.UTF8.GetBytes(Request.Url.GetComponents(UriComponents.Query, UriFormat.Unescaped));
                     qs.Add("state", Convert.ToBase64String(qstr));
@@ -159,7 +159,8 @@ namespace EvoqueMyStyle.Website
                         JObject result = JObject.Parse(reader.ReadToEnd());
                         if (result["error"] == null)
                         {
-                            XMLOutput.ReturnValue("ok", "0", "message");
+                            //XMLOutput.ReturnValue("ok", "0", "message");
+                            Response.Redirect("http://www.evoquemystyle.cn/?utm_source=adchina&utm_medium=uploader&utm_campaign=Evoquemystyle");
                         }
                         else
                         {
