@@ -72,16 +72,17 @@ namespace EvoqueMyStyle.Website
                     gp.page = pageidx;
                     gp.size = psize;
                     gp.uid = uid;
+                    IList<share> pics;
                     try
                     {
-                        IList<share> pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
-                        XMLOutput.ReturnPicsList(pics, gp.total);
+                        pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
                     }
                     catch (Exception ex)
                     {
                         XMLOutput.ReturnValue(ex.Message, "0500");
                         return;
                     }
+                    XMLOutput.ReturnPicsList(pics, gp.total);
                     break;
                 #endregion
 
@@ -147,16 +148,17 @@ namespace EvoqueMyStyle.Website
                     }
                     es_getrandpic gr = new es_getrandpic();
                     gr.count = _count;
+                    IList<share> rpics;
                     try
                     {
-                        IList<share> pics = share.Instance.GetDataTransferObjectList(gr.ExecuteReader());
-                        XMLOutput.ReturnPicsList(pics, _count);
+                        rpics = share.Instance.GetDataTransferObjectList(gr.ExecuteReader());
                     }
                     catch (Exception ex)
                     {
                         XMLOutput.ReturnValue(ex.Message, "0500");
                         return;
                     }
+                    XMLOutput.ReturnPicsList(rpics, _count);
                     break;
                 #endregion
 
