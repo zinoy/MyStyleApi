@@ -72,17 +72,16 @@ namespace EvoqueMyStyle.Website
                     gp.page = pageidx;
                     gp.size = psize;
                     gp.uid = uid;
-                    IList<share> pics;
                     try
                     {
-                        pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
+                        IList<share> pics = share.Instance.GetDataTransferObjectList(gp.ExecuteReader());
+                        XMLOutput.ReturnPicsList(pics, gp.total);
                     }
                     catch (Exception ex)
                     {
                         XMLOutput.ReturnValue(ex.Message, "0500");
                         return;
                     }
-                    XMLOutput.ReturnPicsList(pics, gp.total);
                     break;
                 #endregion
 
@@ -127,6 +126,37 @@ namespace EvoqueMyStyle.Website
                         return;
                     }
                     XMLOutput.ReturnPicsList(_pics, sp.total);
+                    break;
+                #endregion
+
+                #region 获取随机图片
+                case "randpics":
+                    string count = Request.Form["count"];
+
+                    if (string.IsNullOrEmpty(count))
+                    {
+                        XMLOutput.ReturnValue("参数不能为空", "0201");
+                        return;
+                    }
+
+                    int _count;
+                    if (!int.TryParse(count, out _count))
+                    {
+                        XMLOutput.ReturnValue("参数非法", "0202");
+                        return;
+                    }
+                    es_getrandpic gr = new es_getrandpic();
+                    gr.count = _count;
+                    try
+                    {
+                        IList<share> pics = share.Instance.GetDataTransferObjectList(gr.ExecuteReader());
+                        XMLOutput.ReturnPicsList(pics, _count);
+                    }
+                    catch (Exception ex)
+                    {
+                        XMLOutput.ReturnValue(ex.Message, "0500");
+                        return;
+                    }
                     break;
                 #endregion
 

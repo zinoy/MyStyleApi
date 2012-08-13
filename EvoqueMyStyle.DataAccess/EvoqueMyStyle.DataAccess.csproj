@@ -51,6 +51,7 @@
     <Compile Include="es_getcount.cs" />
     <Compile Include="es_getfriends.cs" />
     <Compile Include="es_getpics.cs" />
+    <Compile Include="es_getrandpic.cs" />
     <Compile Include="es_searchpics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tables\ES_LocalUsers.cs" />
